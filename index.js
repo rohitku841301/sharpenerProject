@@ -10,7 +10,7 @@ function handleFormSubmit(event) {
 
   axios
     .post(
-      "https://crudcrud.com/api/30508dae56a84753afb1bf4680ce653d/bookingData",
+      "https://crudcrud.com/api/b8a1fc0a1fb247acbc817e474c2199d1/bookingData",
       userDetails
     )
     .then((res) => {
@@ -27,7 +27,35 @@ function handleFormSubmit(event) {
 function deleteUserDetail(event) {
   const parent = event.target.parentNode;
   const li = parent.getElementsByTagName("li")[1];
-  localStorage.removeItem(li.innerText);
+  console.log(li.innerText);
+//   const node = JSON.parse(localStorage.getItem(li.innerText));
+//   console.log(node);
+axios.get("https://crudcrud.com/api/b8a1fc0a1fb247acbc817e474c2199d1/bookingData")
+.then((res)=>{
+    // console.log(res.data);
+    const email=res.data;
+    for(let i=0;i<email.length;i++){        
+        if(email[i].email===li.innerText){
+            const id=res.data[i]._id;
+            axios.delete(`https://crudcrud.com/api/b8a1fc0a1fb247acbc817e474c2199d1/bookingData/${id}`)
+            .then((res)=>{
+                console.log(res);
+                console.log("successfully deleted");
+            })
+            .catch((error)=>{
+                console.log(error);
+            })
+        }
+    }
+})
+.catch((error)=>{
+    console.log(error);
+})
+
+
+//   localStorage.removeItem(li.innerText);
+
+
   parent.remove();
   if (event.target.classList.contains("edit")) {
     const input = document.querySelectorAll("input");
@@ -40,10 +68,9 @@ function deleteUserDetail(event) {
 window.addEventListener("DOMContentLoaded", () => {
   axios
     .get(
-      "https://crudcrud.com/api/30508dae56a84753afb1bf4680ce653d/bookingData"
+      "https://crudcrud.com/api/b8a1fc0a1fb247acbc817e474c2199d1/bookingData"
     )
     .then((res) => {
-      console.log(res.data[0]);
       const newObj = res.data;
       for (let i = 0; i < newObj.length; i++) {
         showUser(newObj[i]);
@@ -53,15 +80,15 @@ window.addEventListener("DOMContentLoaded", () => {
       console.log(error);
     });
 
-  // Retrieve data from local Storage
+//   Retrieve data from local Storage
 
-  // const localStorageObj = localStorage;
-  // const localStorageObjKeys = Object.keys(localStorageObj);
-  // for(let i=0;i<localStorageObjKeys.length;i++){
-  //     const eachUser = localStorageObjKeys[i];
-  //     const newObj = JSON.parse(localStorage.getItem(eachUser));
-  //     showUser(newObj);
-  // }
+//   const localStorageObj = localStorage;
+//   const localStorageObjKeys = Object.keys(localStorageObj);
+//   for(let i=0;i<localStorageObjKeys.length;i++){
+//       const eachUser = localStorageObjKeys[i];
+//       const newObj = JSON.parse(localStorage.getItem(eachUser));
+//       showUser(newObj);
+//   }
 });
 
 function showUser(newObj) {
